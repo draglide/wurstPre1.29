@@ -1,0 +1,59 @@
+package Playercolor
+import NoWurst
+import Force
+import Player
+
+public constant PLAYER_COLOR_BLACK_AGGRESSIVE = ConvertPlayerColor(24)
+public constant PLAYER_COLOR_UNKNOWN1 = ConvertPlayerColor(25)
+public constant PLAYER_COLOR_UNKNOWN2 = ConvertPlayerColor(26)
+public constant PLAYER_COLOR_BLACK_PASSIVE = ConvertPlayerColor(27)
+
+constant LOOKUP = [
+	PLAYER_COLOR_RED,
+	PLAYER_COLOR_BLUE,
+	PLAYER_COLOR_CYAN,
+	PLAYER_COLOR_PURPLE,
+	PLAYER_COLOR_YELLOW,
+	PLAYER_COLOR_ORANGE,
+	PLAYER_COLOR_GREEN,
+	PLAYER_COLOR_PINK,
+	PLAYER_COLOR_LIGHT_GRAY,
+	PLAYER_COLOR_LIGHT_BLUE,
+	PLAYER_COLOR_AQUA,
+	PLAYER_COLOR_BROWN,
+	PLAYER_COLOR_BLACK_AGGRESSIVE,
+	PLAYER_COLOR_UNKNOWN1,
+	PLAYER_COLOR_UNKNOWN2,
+	PLAYER_COLOR_BLACK_PASSIVE]
+
+public function player.setColor(playercolor color)
+	SetPlayerColor(this, color)
+
+public function player.getColor() returns playercolor
+	return GetPlayerColor(this)
+
+public function int.toPlayerColor() returns playercolor
+	return LOOKUP[this]
+
+public function playercolor.toInt() returns int
+	var value = 0
+	for i = 0 to bj_MAX_PLAYER_SLOTS - 1
+		if LOOKUP[i] == this
+			value = i
+			break
+	return value
+
+
+/** Returns the player that had this color *at the start of the game*. Does not
+	respect SetPlayerColor. */
+public function playercolor.getPlayer() returns player
+	return players[this.toInt()]
+
+/** Returns the players who are currently using this player color. Respects calls
+	to SetPlayerColor */
+public function playercolor.getPlayers() returns force
+	let matchingPlayers = CreateForce()
+	for i = 0 to bj_MAX_PLAYER_SLOTS - 1
+		if players[i].getColor() == this
+			matchingPlayers.addPlayer(players[i])
+	return matchingPlayers
